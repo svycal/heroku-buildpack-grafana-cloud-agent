@@ -17,15 +17,18 @@ export_env_dir() {
   fi
 }
 
-if ! [ -x "$(command -v envsubst)" ]; then
-  echo "-----> Installing dependencies"
-  apt install -y gettext
-fi
+# if ! [ -x "$(command -v envsubst)" ]; then
+#   echo "-----> Installing dependencies"
+#   apt install -y gettext
+# fi
 
 export_env_dir "$ENV_DIR"
 
-echo "-----> Substituting environment variables"
-envsubst < $BUILD_DIR/config.yml > $BUILD_DIR/agent.yml
+# echo "-----> Substituting environment variables"
+# envsubst < $BUILD_DIR/config.yml > $BUILD_DIR/agent.yml
+
+echo "-----> Copying configuration file"
+cp $BUILD_DIR/config.yml $BUILD_DIR/agent.yml
 
 # Debugging
 cat $BUILD_DIR/agent.yml
