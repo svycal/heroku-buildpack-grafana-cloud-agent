@@ -26,7 +26,7 @@ The buildpack will substitute any environment variables. Example:
 ```yaml
 ---
 server:
-  http_listen_port: $PORT
+  http_listen_port: ${PORT}
 
 prometheus:
   wal_directory: "./"
@@ -44,7 +44,7 @@ prometheus:
       remote_write:
         - url: https://prom.taysway.xyz/api/prom/push
           basic_auth:
-            username: $USERNAME
-            password: $PASSWORD
+            username: ${USERNAME}
+            password: ${PASSWORD}
 ```
 
