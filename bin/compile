@@ -26,6 +26,3 @@ export_env_dir "$ENV_DIR"
 
 echo "-----> Substituting envrionment variables"
 envsubst < $BUILD_DIR/config.yml > $BUILD_DIR/agent.yml
-
-# For debug purposes
-cat $BUILD_DIR/agent.yml
