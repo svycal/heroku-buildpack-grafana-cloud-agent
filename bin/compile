@@ -3,16 +3,28 @@
 BUILD_DIR=$1
 CACHE_DIR=$2
 
-if [[ -f $CACHE_DIR/agent.yml && cmp -s $BUILD_DIR/config.yml $CACHE_DIR/agent.yml ]]; then
-  echo "Reusing cached config.yml."
-  cp -f "$CACHE_DIR/agent.yml" "$BUILD_DIR/agent.yml"
-else
-  if ! [ -x "$(command -v envsubst)" ]; then
-    echo "Installing dependencies."
-    apt install -y gettext
+export_env_dir() {
+  env_dir=$1
+  acceptlist_regex=${2:-''}
+  denylist_regex=${3:-'^(PATH|GIT_DIR|CPATH|CPPATH|LD_PRELOAD|LIBRARY_PATH)$'}
+  if [ -d "$env_dir" ]; then
+    for e in $(ls $env_dir); do
+      echo "$e" | grep -E "$acceptlist_regex" | grep -qvE "$denylist_regex" &&
+      export "$e=$(cat $env_dir/$e)"
+      :
+    done
   fi
+}
 
-  echo "Substituting envrionment variables."
-  envsubst < $BUILD_DIR/config.yml > $BUILD_DIR/agent.yml
-  cp -f "$BUILD_DIR/agent.yml" "$CACHE_DIR/agent.yml"
+if ! [ -x "$(command -v envsubst)" ]; then
+  echo "-----> Installing dependencies"
+  apt install -y gettext
 fi
+
+export_env_dir "$ENV_DIR"
+
+echo "-----> Substituting envrionment variables"
+envsubst < $BUILD_DIR/config.yml > $BUILD_DIR/agent.yml
+
+# For debug purposes
+cat $BUILD_DIR/agent.yml
